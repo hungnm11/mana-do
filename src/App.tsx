@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import SignInPage from './components/signin/SignInPage';
-import ToDoPage from './ToDoPage';
+import ToDoPage from './components/todo/ToDoPage';
 
 import './App.css';
 
