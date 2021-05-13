@@ -38,16 +38,16 @@ function reducer(state: AppState, action: AppActions): AppState {
       };
 
     case UPDATE_TODO_STATUS:
-      const index2 = state.todos.findIndex(
-        (todo) => todo.id === action.payload.todoId
+      const index2 = list.findIndex(
+        (todo: { id: string }) => todo.id === action.payload.todoId
       );
-      state.todos[index2].status = action.payload.checked
+      list[index2].status = action.payload.checked
         ? TodoStatus.COMPLETED
         : TodoStatus.ACTIVE;
-
+      localStorage.setItem('todo-list', JSON.stringify(list));
       return {
         ...state,
-        todos: state.todos,
+        todos: list,
       };
 
     case TOGGLE_ALL_TODOS:
