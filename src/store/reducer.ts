@@ -7,6 +7,7 @@ import {
   SET_TODO,
   TOGGLE_ALL_TODOS,
   UPDATE_TODO_STATUS,
+  EDIT_TODOS,
 } from './actions';
 
 export interface AppState {
@@ -43,6 +44,17 @@ function reducer(state: AppState, action: AppActions): AppState {
       list[index2].status = action.payload.checked
         ? TodoStatus.COMPLETED
         : TodoStatus.ACTIVE;
+      localStorage.setItem('todo-list', JSON.stringify(list));
+      return {
+        ...state,
+        todos: list,
+      };
+
+    case EDIT_TODOS:
+      const index3 = list.findIndex(
+        (todo: { id: string }) => todo.id === action.payload.todoId
+      );
+      list[index3].content = action.payload.content;
       localStorage.setItem('todo-list', JSON.stringify(list));
       return {
         ...state,

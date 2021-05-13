@@ -9,6 +9,7 @@ import {
   toggleAllTodos,
   deleteAllTodos,
   updateTodoStatus,
+  editTodos,
 } from '../../store/actions';
 import Service from '../../service';
 import { TodoStatus } from '../../models/todo';
@@ -21,23 +22,25 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
   const [showing, setShowing] = useState<EnhanceTodoStatus>('ALL');
   const inputRef = useRef<HTMLInputElement>(null);
   const [toggle, setToggle] = useState<Boolean>(false);
-  const [getIdEl, setIdEl] = useState<String>('');
+  const [getIdEl, setIdEl] = useState('');
   const [text, setText] = useState('');
   const [isComponentVisible, setIsComponentVisible] = useState<Boolean>(false);
-  const ref = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const editRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     (async () => {
       const resp = await Service.getTodos();
       dispatch(setTodos(resp || []));
     })();
-    document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener('click', onClickOutside, true);
+
     return () => {
-      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener('click', onClickOutside, true);
     };
   }, []);
 
-  const handleClickOutside = (event: Event) => {
+  const onClickOutside = (event: Event) => {
     if (ref.current && !ref.current.contains(event.target as Node)) {
       setIsComponentVisible(false);
       setToggle(false);
@@ -73,13 +76,30 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
     dispatch(deleteAllTodos());
   };
 
-  const toggleInput = (todoId: string, value: string) => {
+  const onToggleInput = (todoId: string, value: string) => {
     setToggle(true);
     setIdEl(todoId);
     setText(value);
   };
 
-  const handleChange = (event: {
+  const onHandleKeyPress = async (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    if (e.key === 'Enter' && editRef.current) {
+      try {
+        const value: string = editRef.current?.value as string;
+        setToggle(false);
+        dispatch(editTodos(id, value));
+      } catch (e) {
+        if (e.response.status === 401) {
+          history.push('/');
+        }
+      }
+    }
+  };
+
+  const onHandleChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setText(event.target.value);
@@ -122,7 +142,7 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
               {!toggle && !isComponentVisible && (
                 <span
                   onDoubleClick={(e) => {
-                    toggleInput(todo.id, todo.content);
+                    onToggleInput(todo.id, todo.content);
                     setIsComponentVisible(true);
                   }}
                 >
@@ -132,12 +152,20 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
 
               {toggle && getIdEl === todo.id && isComponentVisible ? (
                 <span>
-                  <input type='text' value={text} onChange={handleChange} />
+                  <input
+                    type='text'
+                    value={text}
+                    onChange={onHandleChange}
+                    autoFocus
+                    id={todo.id}
+                    ref={editRef}
+                    onKeyDown={(e) => onHandleKeyPress(e, todo.id)}
+                  />
                 </span>
               ) : (
                 <span
                   onDoubleClick={(e) => {
-                    toggleInput(todo.id, todo.content);
+                    onToggleInput(todo.id, todo.content);
                     setIsComponentVisible(true);
                   }}
                 >
