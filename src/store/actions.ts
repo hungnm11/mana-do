@@ -13,7 +13,6 @@ export interface SetTodoAction {
 }
 
 export function setTodos(todos: Array<Todo>): SetTodoAction {
-  console.log('todo ==>', todos);
   return {
     type: SET_TODO,
     payload: todos,
