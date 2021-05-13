@@ -75,9 +75,13 @@ function reducer(state: AppState, action: AppActions): AppState {
         todos: list,
       };
     case DELETE_ALL_TODOS:
+      const del =
+        (list != null &&
+          localStorage.setItem('todo-list', JSON.stringify([]))) ||
+        [];
       return {
         ...state,
-        todos: [],
+        todos: del,
       };
     default:
       return state;
