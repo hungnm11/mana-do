@@ -29,7 +29,6 @@ function reducer(state: AppState, action: AppActions): AppState {
     case CREATE_TODO:
       list.push(action.payload);
       localStorage.setItem('todo-list', JSON.stringify(list));
-      console.log(list);
       // state.todos.push(action.payload);
 
       return {

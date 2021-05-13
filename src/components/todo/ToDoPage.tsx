@@ -20,13 +20,29 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
   const [{ todos }, dispatch] = useReducer(reducer, initialState);
   const [showing, setShowing] = useState<EnhanceTodoStatus>('ALL');
   const inputRef = useRef<HTMLInputElement>(null);
+  const [toggle, setToggle] = useState<Boolean>(false);
+  const [getIdEl, setIdEl] = useState<String>('');
+  const [text, setText] = useState('');
+  const [isComponentVisible, setIsComponentVisible] = useState<Boolean>(false);
+  const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     (async () => {
       const resp = await Service.getTodos();
       dispatch(setTodos(resp || []));
     })();
+    document.addEventListener('click', handleClickOutside, true);
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
   }, []);
+
+  const handleClickOutside = (event: Event) => {
+    if (ref.current && !ref.current.contains(event.target as Node)) {
+      setIsComponentVisible(false);
+      setToggle(false);
+    }
+  };
 
   const onCreateTodo = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputRef.current) {
@@ -57,6 +73,18 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
     dispatch(deleteAllTodos());
   };
 
+  const toggleInput = (todoId: string, value: string) => {
+    setToggle(true);
+    setIdEl(todoId);
+    setText(value);
+  };
+
+  const handleChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setText(event.target.value);
+  };
+
   const showTodos = todos.filter((todo) => {
     switch (showing) {
       case TodoStatus.ACTIVE:
@@ -85,13 +113,38 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
       <div className='ToDo__list'>
         {showTodos.map((todo, index) => {
           return (
-            <div key={index} className='ToDo__item'>
+            <div key={index} className='ToDo__item' ref={ref}>
               <input
                 type='checkbox'
                 checked={isTodoCompleted(todo)}
                 onChange={(e) => onUpdateTodoStatus(e, todo.id)}
               />
-              <span>{todo.content}</span>
+              {!toggle && !isComponentVisible && (
+                <span
+                  onDoubleClick={(e) => {
+                    toggleInput(todo.id, todo.content);
+                    setIsComponentVisible(true);
+                  }}
+                >
+                  {todo.content}
+                </span>
+              )}
+
+              {toggle && getIdEl === todo.id && isComponentVisible ? (
+                <span>
+                  <input type='text' value={text} onChange={handleChange} />
+                </span>
+              ) : (
+                <span
+                  onDoubleClick={(e) => {
+                    toggleInput(todo.id, todo.content);
+                    setIsComponentVisible(true);
+                  }}
+                >
+                  {isComponentVisible && todo.content}
+                </span>
+              )}
+
               <button
                 className='Todo__delete'
                 onClick={() => dispatch(deleteTodo(todo.id))}
