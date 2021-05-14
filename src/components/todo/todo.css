@@ -4,8 +4,8 @@
   color: #fff;
   background: linear-gradient(to right, #9c27b0, #e040fb);
   border: 0;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 25px;
+  padding-right: 25px;
   padding-bottom: 10px;
   padding-top: 10px;
   font-family: 'Ubuntu', sans-serif;
@@ -14,4 +14,49 @@
   box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
   margin: auto;
   display: block;
+}
+
+.ToDo__list .ToDo__item:nth-child(odd) {
+  background: #f9f9f9;
+}
+
+.ToDo__list .ToDo__item:hover {
+  background: #ddd;
+}
+
+.Todo__delete {
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  min-width: auto;
+  min-height: auto;
+  box-shadow: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.Todo__toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.Todo__tabs {
+  display: flex;
+  justify-content: center;
+  padding-left: 15px;
+}
+
+.Todo__tabs > *:not(:last-child) {
+  margin-right: 8px;
+}
+
+input[type='checkbox']:checked + span {
+  color: rgb(211, 0, 0);
+  text-decoration: line-through;
 }

@@ -122,6 +122,7 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
 
   return (
     <div className='ToDo__container'>
+      <h2>My To Do List</h2>
       <div className='Todo__creation'>
         <input
           ref={inputRef}
@@ -157,7 +158,6 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
                     value={text}
                     onChange={onHandleChange}
                     autoFocus
-                    id={todo.id}
                     ref={editRef}
                     onKeyDown={(e) => onHandleKeyPress(e, todo.id)}
                   />
