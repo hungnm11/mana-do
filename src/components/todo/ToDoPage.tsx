@@ -14,6 +14,7 @@ import {
 import Service from '../../service';
 import { TodoStatus } from '../../models/todo';
 import { isTodoCompleted } from '../../utils';
+import Items from './item'
 
 type EnhanceTodoStatus = TodoStatus | 'ALL';
 
@@ -153,14 +154,7 @@ const ToDoPage = ({ history }: RouteComponentProps) => {
 
               {toggle && getIdEl === todo.id && isComponentVisible ? (
                 <span>
-                  <input
-                    type='text'
-                    value={text}
-                    onChange={onHandleChange}
-                    autoFocus
-                    ref={editRef}
-                    onKeyDown={(e) => onHandleKeyPress(e, todo.id)}
-                  />
+                  <Items ref={editRef} onChange={onHandleChange} autoFocus value={text} onKeyDown={(e) => onHandleKeyPress(e, todo.id)} />
                 </span>
               ) : (
                 <span
